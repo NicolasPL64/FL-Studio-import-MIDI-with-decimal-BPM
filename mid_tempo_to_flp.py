@@ -231,7 +231,12 @@ def parse_flp(data):
         start = i
         eid = data[i]
         i += 1
-        if eid < 64:
+        if eid == 172:
+            # FL 25/26 range-rule violation: 0xAC carries a 3-byte payload,
+            # not the 4 bytes the DWORD range predicts. Naive parsing swallows
+            # the next event's opcode byte and desyncs the whole stream.
+            size = 3
+        elif eid < 64:
             size = 1
         elif eid < 128:
             size = 2
